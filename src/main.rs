@@ -1,4 +1,12 @@
-use std::{env, net::{IpAddr, TcpStream}, str::FromStr, process, sync::mpsc::{channel, Sender}, thread, io::{self, Write}};
+use std::{
+    env,
+    io::{self, Write},
+    net::{IpAddr, TcpStream},
+    process,
+    str::FromStr,
+    sync::mpsc::{channel, Sender},
+    thread,
+};
 
 const MAX: u16 = 65535;
 
@@ -39,7 +47,11 @@ impl Arguments {
 
         let f = args[1].clone();
         if let Ok(ipaddr) = IpAddr::from_str(&f) {
-            return Ok(Arguments { flag: String::from(""), addr: ipaddr, threads: 4 });
+            return Ok(Arguments {
+                flag: String::from(""),
+                addr: ipaddr,
+                threads: 4,
+            });
         } else {
             let flag = args[1].clone();
             if flag.contains("-h") || flag.contains("--help") {
@@ -59,7 +71,11 @@ impl Arguments {
                     Err(_) => return Err(get_error_message(ErrorType::NotValidThreads)),
                 };
 
-                return Ok(Arguments{ flag, addr, threads });
+                return Ok(Arguments {
+                    flag,
+                    addr,
+                    threads,
+                });
             } else {
                 return Err(get_error_message(ErrorType::InvalidSyntax));
             }
@@ -75,8 +91,8 @@ fn scan(tx: Sender<u16>, start_port: u16, addr: IpAddr, threads: u16) {
                 print!(".");
                 io::stdout().flush().unwrap();
                 tx.send(port).unwrap();
-            },
-            Err(_) => {},
+            }
+            Err(_) => {}
         }
 
         if (MAX - port) <= threads {
